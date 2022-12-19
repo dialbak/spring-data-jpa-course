@@ -5,6 +5,12 @@ import javax.persistence.*;
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Student")
+@Table(
+        name = "student",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "student_email_unique", columnNames = "email")
+        }
+)
 public class Student {
 
     @Id
@@ -17,27 +23,54 @@ public class Student {
             strategy = SEQUENCE,
             generator = "student_sequence"
     )
-    @Column(name = "id", updatable = false)
+    @Column(
+            name = "id",
+            updatable = false
+    )
     private Long id;
-    @Column(name = "firstName", nullable = false, columnDefinition = "TEXT")
+
+    @Column(
+            name = "first_name",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String firstName;
-    @Column(name = "lastName", nullable = false, columnDefinition = "TEXT")
+
+    @Column(
+            name = "last_name",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String lastName;
 
-    @Column(name = "email", nullable = false, columnDefinition = "TEXT", unique = true)
+    @Column(
+            name = "email",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String email;
-    @Column(name = "age", nullable = false)
-    private int age;
 
-    public Student() {
-    }
+    @Column(
+            name = "age",
+            nullable = false
 
-    public Student(Long id, String firstName, String lastName, int age, String email) {
+    )
+    private Integer age;
+
+    public Student(Long id,
+                   String firstName,
+                   String lastName,
+                   String email,
+                   Integer age) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
         this.email = email;
+        this.age = age;
+    }
+
+    public Student() {
+
     }
 
     public Long getId() {
@@ -72,11 +105,11 @@ public class Student {
         this.email = email;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
