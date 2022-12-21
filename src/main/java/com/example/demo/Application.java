@@ -5,9 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,10 +35,8 @@ public class Application {
             student.addBook(
                     new Book("Clean Code", LocalDateTime.now().minusDays(4)));
 
-
             student.addBook(
                     new Book("Think and Grow Rich", LocalDateTime.now()));
-
 
             student.addBook(
                     new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
@@ -50,11 +45,34 @@ public class Application {
                     "1234567899",
                     student);
 
-            student.setStudentIdCard(studentIdCard);
+            //student.setStudentIdCard(studentIdCard);
 
-            //studentRepository.save(student);
+            student.addEnrolment(new Enrolment(
+                    new EnrolmentId(1L, 1L),
+                    student,
+                    new Course("Computer Science", "IT"),
+                    LocalDateTime.now()
+            ));
 
-            studentRepository.findById(138L)
+            student.addEnrolment(new Enrolment(
+                    new EnrolmentId(1L, 2L),
+                    student,
+                    new Course("Amigoscode Spring Data JPA", "IT"),
+                    LocalDateTime.now().minusDays(18)
+            ));
+
+            student.addEnrolment(new Enrolment(
+                    new EnrolmentId(1L, 2L),
+                    student,
+                    new Course("Amigoscode Spring Data JPA", "IT"),
+                    LocalDateTime.now().minusDays(18)
+            ));
+
+
+
+            studentRepository.save(student);
+
+            studentRepository.findById(1L)
                     .ifPresent(s -> {
                         System.out.println("fetch book lazy...");
                         List<Book> books = student.getBooks();
@@ -63,9 +81,6 @@ public class Application {
                                     s.getFirstName() + " borrowed " + book.getBookName());
                         });
                     });
-
-            // studentIdCardRepository.findById(1L).ifPresent(System.out::println);
-            // studentRepository.deleteById(1L);
 
         };
     }

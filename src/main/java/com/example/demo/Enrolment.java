@@ -2,50 +2,92 @@ package com.example.demo;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Enrolment")
 @Table(name = "enrolment")
 public class Enrolment {
 
-    @Id
-    @SequenceGenerator(
-            name = "enrolment_sequence",
-            sequenceName = "enrolment_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "enrolment_sequence"
-    )
-    @Column(
-            name = "id"
-    )
-    private Long id;
-
-    @ManyToMany
-    @JoinTable(
-            name = "enrolment_students",
-            joinColumns = @JoinColumn("id"),
-            inverseJoinColumns = @JoinColumn("student_id")
-    )
-    private List<Student> students;
+    @EmbeddedId
+    private EnrolmentId id;
 
     @ManyToOne
+    @MapsId("studentId")
+    @JoinColumn(
+            name = "student_id",
+            foreignKey = @ForeignKey(
+                    name = "enrolment_student_id_fk"
+            )
+    )
+    private Student student;
+
+    @ManyToOne
+    @MapsId("courseId")
     @JoinColumn(
             name = "course_id",
-            nullable = false,
-            referencedColumnName = "id"
+            foreignKey = @ForeignKey(
+                    name = "enrolment_course_id_fk"
+            )
     )
-    private List<Course> courses;
+    private Course course;
 
     @Column(
             name = "created_at",
             nullable = false,
-            columnDefinition = "TIMESTAMP NOT NULL"
+            columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
     private LocalDateTime createdAt;
 
+
+    public Enrolment(EnrolmentId id,
+                     Student student,
+                     Course course,
+                     LocalDateTime createdAt) {
+        this.id = id;
+        this.student = student;
+        this.course = course;
+        this.createdAt = createdAt;
+    }
+
+    public Enrolment(Student student,
+                     Course course,
+                     LocalDateTime createdAt) {
+        this.student = student;
+        this.course = course;
+        this.createdAt = createdAt;
+    }
+
+    public Enrolment() {
+    }
+
+    public EnrolmentId getId() {
+        return id;
+    }
+
+    public void setId(EnrolmentId id) {
+        this.id = id;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
