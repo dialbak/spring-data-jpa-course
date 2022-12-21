@@ -9,6 +9,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @SpringBootApplication
 public class Application {
 
@@ -19,25 +22,10 @@ public class Application {
     @Bean
     CommandLineRunner commandLineRunner(
             StudentRepository studentRepository,
-            StudentIdCardRepository studentIdCardRepository,
-            BookRepository bookRepository) {
+            StudentIdCardRepository studentIdCardRepository) {
         return args -> {
-
             Faker faker = new Faker();
 
-
-
-
-            // studentRepository.deleteById(1L);
-            // generateRandomStudents(studentRepository);
-            // sorting(studentRepository);
-            // paginationExample(studentRepository);
-        };
-    }
-
-    private void generateRandomStudents(StudentRepository studentRepository) {
-        Faker faker = new Faker();
-        for (int i = 0; i < 20; i++) {
             String firstName = faker.name().firstName();
             String lastName = faker.name().lastName();
             String email = String.format("%s.%s@amigoscode.edu", firstName, lastName);
@@ -46,26 +34,39 @@ public class Application {
                     lastName,
                     email,
                     faker.number().numberBetween(17, 55));
-            studentRepository.save(student);
-        }
-    }
 
-    private static void paginationExample(StudentRepository studentRepository) {
-        PageRequest pageRequest = PageRequest.of(
-                0,
-                5,
-                Sort.by("firstName").ascending());
-        Page<Student> page = studentRepository.findAll(pageRequest);
-        System.out.println("page = " + page);
-    }
+            student.addBook(
+                    new Book("Clean Code", LocalDateTime.now().minusDays(4)));
 
-    private void sorting(StudentRepository studentRepository) {
-        Sort sort = Sort.by(Sort.Direction.ASC, "firstName");
-        studentRepository
-                .findAll(sort)
-                .forEach(
-                        student -> System.out.println(student.getFirstName())
-                );
-    }
 
+            student.addBook(
+                    new Book("Think and Grow Rich", LocalDateTime.now()));
+
+
+            student.addBook(
+                    new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
+
+            StudentIdCard studentIdCard = new StudentIdCard(
+                    "1234567899",
+                    student);
+
+            student.setStudentIdCard(studentIdCard);
+
+            //studentRepository.save(student);
+
+            studentRepository.findById(138L)
+                    .ifPresent(s -> {
+                        System.out.println("fetch book lazy...");
+                        List<Book> books = student.getBooks();
+                        books.forEach(book -> {
+                            System.out.println(
+                                    s.getFirstName() + " borrowed " + book.getBookName());
+                        });
+                    });
+
+            // studentIdCardRepository.findById(1L).ifPresent(System.out::println);
+            // studentRepository.deleteById(1L);
+
+        };
+    }
 }

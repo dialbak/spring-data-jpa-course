@@ -1,6 +1,5 @@
 package com.example.demo;
 
-import javax.annotation.PreDestroy;
 import javax.persistence.*;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -44,7 +43,9 @@ public class StudentIdCard {
     @JoinColumn(
             name = "student_id",
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "student_id_fk")
+            foreignKey = @ForeignKey(
+                    name = "student_id_fk"
+            )
     )
     private Student student;
 

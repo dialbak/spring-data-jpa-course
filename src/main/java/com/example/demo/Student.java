@@ -2,16 +2,16 @@ package com.example.demo;
 
 import javax.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static javax.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Student")
 @Table(
         name = "student",
         uniqueConstraints = {
-                @UniqueConstraint(
-                        name = "student_email_unique",
-                        columnNames = "email"
-                )
+                @UniqueConstraint(name = "student_email_unique", columnNames = "email")
         }
 )
 public class Student {
@@ -27,8 +27,7 @@ public class Student {
             generator = "student_sequence"
     )
     @Column(
-            name = "id",
-            updatable = false
+            name = "id"
     )
     private Long id;
 
@@ -61,9 +60,21 @@ public class Student {
 
     @OneToOne(
             mappedBy = "student",
-            orphanRemoval = true
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
+
     )
     private StudentIdCard studentIdCard;
+
+    @OneToMany(
+            mappedBy = "student",
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE},
+            fetch = FetchType.LAZY
+    )
+    private List<Book> books = new ArrayList<>();
+    @ManyToMany(mappedBy = "students")
+    private List<Enrolment> enrolments;
 
     public Student(String firstName,
                    String lastName,
@@ -117,6 +128,44 @@ public class Student {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public StudentIdCard getStudentIdCard() {
+        return studentIdCard;
+    }
+
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
+
+    public List<Enrolment> getEnrolments() {
+        return enrolments;
+    }
+
+    public void setEnrolments(List<Enrolment> enrolments) {
+        this.enrolments = enrolments;
+    }
+
+    public void addBook(Book book) {
+        if (!this.books.contains(book)) {
+            this.books.add(book);
+            book.setStudent(this);
+        }
+    }
+
+    public void removeBook(Book book) {
+        if (this.books.contains(book)) {
+            this.books.remove(book);
+            book.setStudent(null);
+        }
+    }
+
+    public void setStudentIdCard(StudentIdCard studentIdCard) {
+        this.studentIdCard = studentIdCard;
+    }
+
+    public List<Book> getBooks() {
+        return books;
     }
 
     @Override

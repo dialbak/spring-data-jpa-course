@@ -1,7 +1,7 @@
 package com.example.demo;
 
+
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 import static javax.persistence.GenerationType.SEQUENCE;
@@ -9,6 +9,7 @@ import static javax.persistence.GenerationType.SEQUENCE;
 @Entity(name = "Book")
 @Table(name = "book")
 public class Book {
+
     @Id
     @SequenceGenerator(
             name = "book_sequence",
@@ -17,7 +18,7 @@ public class Book {
     )
     @GeneratedValue(
             strategy = SEQUENCE,
-            generator = "student_sequence"
+            generator = "book_sequence"
     )
     @Column(
             name = "id",
@@ -25,67 +26,78 @@ public class Book {
     )
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(
-            name = "student_id",
-            referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "student_id_fk")
+    @Column(
+            name = "created_at",
+            nullable = false,
+            columnDefinition = "TIMESTAMP WITHOUT TIME ZONE"
     )
-    private Student student;
+    private LocalDateTime createdAt;
 
     @Column(
             name = "book_name",
-            nullable = false,
-            columnDefinition = "TEXT"
+            nullable = false
     )
-    private String book_name;
+    private String bookName;
 
-
-    @Column(
-            name = "created_At",
+    @ManyToOne
+    @JoinColumn(
+            name = "student_id",
             nullable = false,
-            columnDefinition = "TEXT"
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(
+                    name = "student_book_fk"
+            )
     )
-    private LocalDateTime createdAt;
+    private Student student;
 
     public Book() {
     }
 
-    public Book(Student student, String book_name, LocalDateTime createdAt) {
-        this.student = student;
-        this.book_name = book_name;
+    public Book(String bookName,
+                LocalDateTime createdAt) {
         this.createdAt = createdAt;
+        this.bookName = bookName;
     }
 
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
     public Student getStudent() {
         return student;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public String getBookName() {
+        return bookName;
     }
 
-    public String getBook_name() {
-        return book_name;
-    }
-
-    public void setBook_name(String book_name) {
-        this.book_name = book_name;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+
+    public void setBookName(String bookName) {
+        this.bookName = bookName;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "id=" + id +
+                ", createdAt=" + createdAt +
+                ", bookName='" + bookName + '\'' +
+                ", student=" + student +
+                '}';
     }
 }
