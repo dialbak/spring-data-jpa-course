@@ -28,10 +28,18 @@ public class Enrolment {
     @ManyToMany
     @JoinTable(
             name = "enrolment_students",
-            joinColumns = @JoinColumn("enrolment_id"),
+            joinColumns = @JoinColumn("id"),
             inverseJoinColumns = @JoinColumn("student_id")
     )
     private List<Student> students;
+
+    @ManyToOne
+    @JoinColumn(
+            name = "course_id",
+            nullable = false,
+            referencedColumnName = "id"
+    )
+    private List<Course> courses;
 
     @Column(
             name = "created_at",

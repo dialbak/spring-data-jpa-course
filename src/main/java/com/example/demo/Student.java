@@ -62,7 +62,6 @@ public class Student {
             mappedBy = "student",
             orphanRemoval = true,
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE}
-
     )
     private StudentIdCard studentIdCard;
 
